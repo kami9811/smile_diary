@@ -59,7 +59,7 @@ export class Tab2Page implements OnInit {
     this.router.navigate(['/self', 2, '2']);
   }
   navigateToEdit = () => {
-    this.router.navigate(['/edit', 2, '2']);
+    this.router.navigate(['/edit', 2]);
   }
 
 }

@@ -124,7 +124,7 @@ export class Tab1Page implements OnInit {
     this.router.navigate(['/self', 1, '1']);
   }
   navigateToEdit = () => {
-    this.router.navigate(['/edit', 1, '1']);
+    this.router.navigate(['/edit', 1]);
   }
 
 }
