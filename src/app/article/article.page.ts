@@ -46,7 +46,7 @@ export class ArticlePage implements OnInit {
         this.id = params['id'];
       }
     );
-    if(this.tab == 1){
+    if(this.tab == 1 || this.tab == 3){
       this.imageFlag = true;
       this.headerTitle = 'すまいる日誌';
     }
@@ -71,7 +71,7 @@ export class ArticlePage implements OnInit {
     this.postObj['comment'] = this.comment;
 
     const body = this.postObj;
-    if(this.tab == 1){
+    if(this.tab == 1 || this.tab == 3){
       this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerDiaryComment.php', body).subscribe(
         res => {
           console.log(res),
@@ -104,7 +104,7 @@ export class ArticlePage implements OnInit {
 
         const body = this.postObj;
         // console.log('hash: ' + body['hash'] + ', id: ' + body['id']);
-        if(this.tab == 1){
+        if(this.tab == 1 || this.tab == 3){
           this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getDiaryArticleContents.php', body).subscribe(
             res => {
               console.log(res);
