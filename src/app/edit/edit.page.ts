@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { File } from '@ionic-native/file/ngx';
 import { GlobalService } from '../global.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertController } from '@ionic/angular';
-import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
@@ -14,7 +11,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 })
 export class EditPage implements OnInit {
   imageFlag: Boolean = false;
-  image: string;
+  image: any;
+  imgHeight: number = 600;
 
   title: string = '';
   text: string = '';
@@ -30,13 +28,11 @@ export class EditPage implements OnInit {
   tabFlag: Boolean = false;
 
   constructor(
-    private camera: Camera,
     private gs: GlobalService,
     private geolocation: Geolocation,
     private alertController: AlertController,
     private router: Router,
     private route: ActivatedRoute,
-    private nativeStorage: NativeStorage,
   ) { }
 
   ngOnInit() {
@@ -51,26 +47,31 @@ export class EditPage implements OnInit {
     );
   }
 
-  takePicture = () => {
-    const options: CameraOptions = {
-      quality: 10,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-      allowEdit: true,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
-    };
-
-    this.camera.getPicture(options).then(
-      (imageData) => {
-        this.image = 'data:image/jpeg;base64,' + imageData;
-        this.imageFlag = true;
-      },
-      (err) => {
-        // Handle error
-        console.log("Camera issue:" + err);
+  loadPicture = (e: any) => {
+    console.log(e);
+    var file: any = e.srcElement.files[0];
+    var fileReader: any = new FileReader();
+    var img = new Image();
+    fileReader.onloadend = () => {
+      img.onload = () => {
+        // 画像軽量化
+        console.log('Image Processing');
+        const imgType = img.src.substring(5, img.src.indexOf(';'));
+        const imgWidth = img.width * (this.imgHeight / img.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = imgWidth;
+        canvas.height = this.imgHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, imgWidth, this.imgHeight);
+        this.image = canvas.toDataURL(imgType);
       }
-    );
+      // 画像ファイルを base64 文字列に変換します
+      img.src = fileReader.result;
+      this.imageFlag = true;
+    };
+    if (file) {
+      fileReader.readAsDataURL(file);
+    }
   }
 
   postArticle = () => {
@@ -78,41 +79,37 @@ export class EditPage implements OnInit {
       (resp) => {
         this.latitude = resp.coords.latitude;
         this.longitude = resp.coords.longitude;
-        this.nativeStorage.getItem('login').then(
-          data => {
-            this.postObj['id'] = data['id'];
-            this.postObj['article_id'] = this.article_id;
-            this.postObj['prefecture'] = data['prefecture'];
-            this.postObj['latitude'] = this.latitude;
-            this.postObj['longitude'] = this.longitude;
-            this.postObj['title'] = this.title;
-            this.postObj['text'] = this.text;
-            this.postObj['image'] = this.image;
-            this.postObj['hash'] = data['hash'];
+        this.postObj['id'] = localStorage.id;
+        this.postObj['article_id'] = this.article_id;
+        this.postObj['prefecture'] = localStorage.prefecture;
+        this.postObj['latitude'] = this.latitude;
+        this.postObj['longitude'] = this.longitude;
+        this.postObj['title'] = this.title;
+        this.postObj['text'] = this.text;
+        this.postObj['image'] = this.image;
+        this.postObj['hash'] = localStorage.hash;
 
-            const body = this.postObj;
-            if(this.tab == 1){
-              this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerDiaryArticle.php', body).subscribe(
-                res => {
-                  console.log(res);
-                  this.navigate();
-                  this.alertPost();
-                },
-                error => console.error(error)
-              );
-            }
-            else if (this.tab == 2){
-              this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerTipsArticle.php', body).subscribe(
-                res => {
-                  console.log(res);
-                  this.navigate();
-                  this.alertPost();
-                },
-                error => console.error(error)
-              );
-            }
-          },
-        );
+        const body = this.postObj;
+        if(this.tab == 1){
+          this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerDiaryArticle.php', body).subscribe(
+            res => {
+              console.log(res);
+              this.navigate();
+              this.alertPost();
+            },
+            error => console.error(error)
+          );
+        }
+        else if (this.tab == 2){
+          this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerTipsArticle.php', body).subscribe(
+            res => {
+              console.log(res);
+              this.navigate();
+              this.alertPost();
+            },
+            error => console.error(error)
+          );
+        }
       },
       error => console.error(error)
     );

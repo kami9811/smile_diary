@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { GlobalService } from '../global.service';
-import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +20,6 @@ export class LoginPage implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     public gs: GlobalService,
-    private nativeStorage: NativeStorage,
   ) { }
 
   ngOnInit() {
@@ -46,21 +44,13 @@ export class LoginPage implements OnInit, OnDestroy {
         this.status = this.returnObj["status"];
         // console.log(this.returnObj["status"]);
         if(this.status == 200){
-          this.nativeStorage.setItem('login', {
-            id: this.id,
-            attribute: this.returnObj["attribute"],
-            prefecture: this.returnObj["prefecture"],
-            password: this.password,
-            hash: this.returnObj["hash"]
-          }).then(
-            () => {
-              console.log('Stored item!');
-              this.router.navigate(['/tabs', 'tab3', 'login']);
-              this.router.navigate(['/tabs', 'tab2', 'login']);
-              this.router.navigate(['/tabs', 'tab1', 'login']);
-            },
-            error => console.log('Error storing', error)
-          )
+          localStorage.id = this.id;
+          localStorage.attribute = this.returnObj["attribute"];
+          localStorage.prefecture = this.returnObj["prefecture"];
+          localStorage.password = this.password;
+          localStorage.hash = this.returnObj["hash"];
+          console.log('Stored item!');
+          this.router.navigate(['/tabs', 'tab1', 'login']);
         }
       },
       error => {

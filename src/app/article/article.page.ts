@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { GlobalService } from '../global.service';
-import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -32,7 +31,6 @@ export class ArticlePage implements OnInit {
     public gs: GlobalService,
     private router: Router,
     private route: ActivatedRoute,
-    private nativeStorage: NativeStorage,
     private alertController: AlertController,
   ) { }
 
@@ -74,7 +72,7 @@ export class ArticlePage implements OnInit {
     if(this.tab == 1 || this.tab == 3){
       this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerDiaryComment.php', body).subscribe(
         res => {
-          console.log(res),
+          // console.log(res);
           // this.router.navigate(['/article', this.tab, this.article_id, this.title, this.text, this.id]);
           this.loadContents();
           this.alertComment();
@@ -96,53 +94,45 @@ export class ArticlePage implements OnInit {
   }
 
   loadContents = () => {
-    this.nativeStorage.getItem('login').then(
-      data => {
-        console.log(data);
-        this.postObj["id"] = data["id"];
-        this.postObj["hash"] = data["hash"];
+    this.postObj["id"] = localStorage.id;
+    this.postObj["hash"] = localStorage.hash;
 
-        const body = this.postObj;
-        // console.log('hash: ' + body['hash'] + ', id: ' + body['id']);
-        if(this.tab == 1 || this.tab == 3){
-          this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getDiaryArticleContents.php', body).subscribe(
-            res => {
-              console.log(res);
-              this.returnObj = res;
-              this.image = this.returnObj['image'];
-              this.commentList = [];
-              for(let i: any = 0; i < this.returnObj['comment_num']; i++){
-                let n = i + 1;
-                this.objWord = 'comment' + n;
-                this.commentList.push(this.returnObj['comment_list'][this.objWord]);
-              }
-              console.log(this.commentList);
-            },
-            error => console.error(error)
-          );
-        }
-        if(this.tab == 2){
-          this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getTipsArticleContents.php', body).subscribe(
-            res => {
-              console.log(res);
-              this.returnObj = res;
-              this.image = this.returnObj['image'];
-              this.commentList = [];
-              for(let i: any = 0; i < this.returnObj['comment_num']; i++){
-                let n = i + 1;
-                this.objWord = 'comment' + n;
-                this.commentList.push(this.returnObj['comment_list'][this.objWord]);
-              }
-              console.log(this.commentList);
-            },
-            error => console.error(error)
-          );
-        }
-      },
-      error => {
-        console.error(error)
-      }
-    );
+    const body = this.postObj;
+    // console.log('hash: ' + body['hash'] + ', id: ' + body['id']);
+    if(this.tab == 1 || this.tab == 3){
+      this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getDiaryArticleContents.php', body).subscribe(
+        res => {
+          console.log(res);
+          this.returnObj = res;
+          this.image = this.returnObj['image'];
+          this.commentList = [];
+          for(let i: any = 0; i < this.returnObj['comment_num']; i++){
+            let n = i + 1;
+            this.objWord = 'comment' + n;
+            this.commentList.push(this.returnObj['comment_list'][this.objWord]);
+          }
+          console.log(this.commentList);
+        },
+        error => console.error(error)
+      );
+    }
+    if(this.tab == 2){
+      this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getTipsArticleContents.php', body).subscribe(
+        res => {
+          console.log(res);
+          this.returnObj = res;
+          this.image = this.returnObj['image'];
+          this.commentList = [];
+          for(let i: any = 0; i < this.returnObj['comment_num']; i++){
+            let n = i + 1;
+            this.objWord = 'comment' + n;
+            this.commentList.push(this.returnObj['comment_list'][this.objWord]);
+          }
+          console.log(this.commentList);
+        },
+        error => console.error(error)
+      );
+    }
   }
 
 }

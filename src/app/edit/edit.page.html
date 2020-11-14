@@ -9,8 +9,9 @@
 
 <ion-content>
   <div *ngIf="tabFlag">
-    <div class="button-area">
-      <button type="submit" id="file-button" (click)="takePicture()">日誌の写真を選択</button>
+    <div class="button-area ion-padding">
+      <label for="file-button" id="file-button-label">日誌の写真を選択</label>
+      <input type="file" accept="image/*" id="file-button" (change)="loadPicture($event)"/>
     </div>
     <div *ngIf="imageFlag">
       <ion-img [src]="image" id="image"></ion-img>
