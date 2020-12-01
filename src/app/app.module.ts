@@ -18,6 +18,8 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 import { File } from '@ionic-native/file/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +29,7 @@ import { Camera } from '@ionic-native/camera/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     StatusBar,

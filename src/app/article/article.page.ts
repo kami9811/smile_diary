@@ -74,7 +74,7 @@ export class ArticlePage implements OnInit {
     if(this.tab == 1 || this.tab == 3){
       this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/registerDiaryComment.php', body).subscribe(
         res => {
-          console.log(res),
+          // console.log(res);
           // this.router.navigate(['/article', this.tab, this.article_id, this.title, this.text, this.id]);
           this.loadContents();
           this.alertComment();

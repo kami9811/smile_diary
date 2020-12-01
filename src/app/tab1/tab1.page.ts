@@ -70,6 +70,26 @@ export class Tab1Page implements OnInit {
 
                 this.gs.http('https://kn46itblog.com/hackathon/CCCu22/php_apis/getDiaryArticle.php', body).subscribe(
                   res => {
+                    /*
+                    {
+                    	"status": 200,
+                    	"message": "日記記事一覧取得に成功しました.",
+                    	"article_num": ARTICLE_NUM,
+                    	"article_list": {
+                    		"article1": {
+                    			"title": "TITLE",
+                    			"text": "TEXT",
+                    			"article_id": ARTICLE_ID,
+                    			"id": "ID",
+                    			"distance": DISTANCE
+                    		},
+                    		"article2": {
+                    			...
+                    		},
+                    		...
+                    	}
+                    }
+                    */
                     console.log(res);
                     this.articleObj = res;
                     this.articleList = [];

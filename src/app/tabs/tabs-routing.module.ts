@@ -4,7 +4,8 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    // path: 'tabs',  // tabsをトップページにしないならこうする
+    path: '',
     component: TabsPage,
     children: [
       {
